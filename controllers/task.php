@@ -10,7 +10,7 @@ class TaskController {
         string $username,
         string $password,
         string $db_name,
-        string $port
+        int $port
     ) {
         $this->conn = new mysqli($server_name, $username, $password, $db_name, $port);
 
