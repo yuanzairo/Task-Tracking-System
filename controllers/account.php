@@ -10,7 +10,7 @@ class AccountController {
         string $username,
         string $password,
         string $db_name,
-        int $port
+        int $port = 3306
     ) {
         $this->conn = new mysqli($server_name, 
                                  $username,
