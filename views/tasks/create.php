@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../helpers/auth.php';
 require_once __DIR__ . '/../../controllers/task.php';
 require_once __DIR__ . '/../../public/database.config.php';
 
-$taskCtrl = new TaskController($SERVER_NAME, $USERNAME, $PASSWORD, $DB_NAME);
+$taskCtrl = new TaskController($SERVER_NAME, $USERNAME, $PASSWORD, $DB_NAME, $PORT);
 $error    = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_task'])) {
