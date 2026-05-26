@@ -1,11 +1,8 @@
 <?php
-// index.php — Login page
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-
 session_start();
 
-// Already logged in → go to dashboard
 if (isset($_SESSION['user_id'])) {
     header('Location: /views/dashboard/index.php');
     exit();
@@ -31,20 +28,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
             header('Location: /views/dashboard/index.php');
             exit();
         } else {
-            $error = $result; // error message string
+            $error = $result;
         }
     }
 }
 ?>
 <?php require 'views/partial/header.php'; ?>
 
-<div class="auth-container flex-center" style="min-height:80vh;">
-    <div class="card auth-card p-2">
-        <h2 style="margin-bottom:0.25rem;">Welcome back 👋</h2>
-        <p style="margin-bottom:1.5rem;color:#64748b;">Log in to your TaskFlow account</p>
+<div class="auth-container">
+    <div class="auth-card animate-fade-up">
+
+        <span class="auth-logo">⚡ TaskFlow</span>
+
+        <h2>Welcome back</h2>
+        <p style="margin-bottom:1.75rem;">Log in to your account to continue.</p>
 
         <?php if (!empty($error)): ?>
-            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+            <div class="alert alert-danger">⚠ <?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
         <form method="POST">
@@ -52,21 +52,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username"
                        value="<?= htmlspecialchars($_POST['username'] ?? '') ?>"
-                       placeholder="Enter username" required>
+                       placeholder="Enter your username" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password"
-                       placeholder="Enter password" required>
+                       placeholder="Enter your password" required>
             </div>
-            <button type="submit" name="login" class="btn btn-primary" style="width:100%;">
-                Log In
+            <button type="submit" name="login" class="btn btn-primary" style="width:100%;padding:0.7rem;">
+                Log In →
             </button>
         </form>
 
-        <p style="margin-top:1rem;text-align:center;color:#64748b;">
-            Don't have an account?
-            <a href="/register.php">Register here</a>
+        <p style="margin-top:1.25rem;text-align:center;margin-bottom:0;">
+            No account yet? <a href="register.php">Register here</a>
         </p>
     </div>
 </div>
