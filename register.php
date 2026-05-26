@@ -1,5 +1,4 @@
 <?php
-// register.php — Registration page
 session_start();
 
 if (isset($_SESSION['user_id'])) {
@@ -41,16 +40,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
 ?>
 <?php require 'views/partial/header.php'; ?>
 
-<div class="auth-container flex-center" style="min-height:80vh;">
-    <div class="card auth-card p-2">
-        <h2 style="margin-bottom:0.25rem;">Create Account</h2>
-        <p style="margin-bottom:1.5rem;color:#64748b;">Join TaskFlow and start tracking today</p>
+<div class="auth-container">
+    <div class="auth-card animate-fade-up">
+
+        <span class="auth-logo">⚡ TaskFlow</span>
+
+        <h2>Create account</h2>
+        <p style="margin-bottom:1.75rem;">Join TaskFlow and start tracking your tasks.</p>
 
         <?php if (!empty($error)): ?>
-            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+            <div class="alert alert-danger">⚠ <?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
         <?php if (!empty($success)): ?>
-            <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
+            <div class="alert alert-success">✔ <?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
 
         <form method="POST">
@@ -58,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username"
                        value="<?= htmlspecialchars($_POST['username'] ?? '') ?>"
-                       placeholder="Choose a username" required>
+                       placeholder="Choose a username (min 3 chars)" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -70,14 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
                 <input type="password" id="password2" name="password2"
                        placeholder="Repeat your password" required>
             </div>
-            <button type="submit" name="register" class="btn btn-primary" style="width:100%;">
-                Register
+            <button type="submit" name="register" class="btn btn-primary" style="width:100%;padding:0.7rem;">
+                Create Account →
             </button>
         </form>
 
-        <p style="margin-top:1rem;text-align:center;color:#64748b;">
-            Already have an account?
-            <a href="/index.php">Log in</a>
+        <p style="margin-top:1.25rem;text-align:center;margin-bottom:0;">
+            Already have an account? <a href="index.php">Log in</a>
         </p>
     </div>
 </div>
