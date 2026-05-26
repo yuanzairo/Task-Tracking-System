@@ -9,9 +9,10 @@ class TaskController {
         string $server_name,
         string $username,
         string $password,
-        string $db_name
+        string $db_name,
+        string $port
     ) {
-        $this->conn = new mysqli($server_name, $username, $password, $db_name);
+        $this->conn = new mysqli($server_name, $username, $password, $db_name, $port);
 
         if ($this->conn->connect_error) {
             die('Database connection failed: ' . $this->conn->connect_error);
