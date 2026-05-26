@@ -1,6 +1,6 @@
 <?php
-$SERVER_NAME = getenv('SERVER_NAME');
-$USERNAME = getenv('USERNAME');
-$PASSWORD = getenv('PASSWORD');
-$DB_NAME = getenv('DB_NAME');
-$PORT = getenv('PORT');
+$SERVER_NAME = getenv('MYSQLSERVER');
+$USERNAME = getenv('MYSQLUSER');
+$PASSWORD = getenv('MYSQLPASSWORD');
+$DB_NAME = getenv('MYSQLDATABASE');
+$PORT = getenv('MYSQLPORT');
