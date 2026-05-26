@@ -10,7 +10,7 @@
 <?php if (isset($_SESSION['username'])): ?>
 <nav class="navbar">
     <div class="container">
-        <span class="nav-brand">⚡ Task<span>Flow</span></span>
+        <span class="nav-brand">Task<span>Flow</span></span>
         <div class="nav-links">
             <a href="/views/dashboard/index.php">Dashboard</a>
             <a href="/views/tasks/index.php">My Tasks</a>
