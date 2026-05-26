@@ -1,15 +1,12 @@
 <?php
-// views/dashboard/index.php — Dashboard
 session_start();
-
 require_once __DIR__ . '/../../helpers/auth.php';
 require_once __DIR__ . '/../../controllers/task.php';
 require_once __DIR__ . '/../../public/database.config.php';
 
 $taskCtrl = new TaskController($SERVER_NAME, $USERNAME, $PASSWORD, $DB_NAME);
 $stats    = $taskCtrl->getStats($_SESSION['user_id']);
-$recent   = $taskCtrl->getAll($_SESSION['user_id']); // all, sorted newest first
-$recent   = array_slice($recent, 0, 5);              // show latest 5 on dashboard
+$recent   = array_slice($taskCtrl->getAll($_SESSION['user_id']), 0, 5);
 
 $pct = ($stats['total'] > 0)
     ? round(($stats['completed'] / $stats['total']) * 100)
@@ -17,50 +14,60 @@ $pct = ($stats['total'] > 0)
 ?>
 <?php require __DIR__ . '/../partial/header.php'; ?>
 
-<h1 style="margin-bottom:0.25rem;">
-    Hello, <?= htmlspecialchars($_SESSION['username']) ?> 👋
-</h1>
-<p style="color:#64748b;margin-bottom:2rem;">Here's your task overview for today.</p>
+<!-- Page Header -->
+<div class="page-header animate-fade-up">
+    <h1>Good day, <?= htmlspecialchars($_SESSION['username']) ?> 👋</h1>
+    <p>Here's your productivity snapshot.</p>
+</div>
 
-<!-- Stats Cards -->
-<div class="grid grid-3 mb-2">
-    <div class="card" style="border-left:4px solid #2563eb;">
-        <p style="color:#64748b;font-size:0.85rem;margin-bottom:0.25rem;">Total Tasks</p>
-        <h2 style="font-size:2rem;"><?= $stats['total'] ?></h2>
+<!-- Stat Cards -->
+<div class="grid grid-3 mb-3 animate-fade-up">
+    <div class="stat-card blue">
+        <div class="stat-label">Total Tasks</div>
+        <div class="stat-value"><?= $stats['total'] ?? 0 ?></div>
     </div>
-    <div class="card" style="border-left:4px solid #16a34a;">
-        <p style="color:#64748b;font-size:0.85rem;margin-bottom:0.25rem;">Completed</p>
-        <h2 style="font-size:2rem;color:#16a34a;"><?= $stats['completed'] ?></h2>
+    <div class="stat-card green">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value"><?= $stats['completed'] ?? 0 ?></div>
     </div>
-    <div class="card" style="border-left:4px solid #f59e0b;">
-        <p style="color:#64748b;font-size:0.85rem;margin-bottom:0.25rem;">Pending</p>
-        <h2 style="font-size:2rem;color:#f59e0b;"><?= $stats['pending'] ?></h2>
+    <div class="stat-card yellow">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value"><?= $stats['pending'] ?? 0 ?></div>
     </div>
 </div>
 
-<!-- Progress bar -->
-<div class="card mb-2">
-    <div class="flex-between mb-1">
-        <span style="font-weight:600;">Overall Progress</span>
-        <span style="color:#64748b;"><?= $pct ?>% complete</span>
+<!-- Progress -->
+<div class="card mb-3 animate-fade-up">
+    <div class="flex-between mb-2">
+        <div>
+            <h3 style="margin-bottom:0.15rem;">Overall Progress</h3>
+            <p style="margin:0;font-size:0.8rem;"><?= $stats['completed'] ?? 0 ?> of <?= $stats['total'] ?? 0 ?> tasks done</p>
+        </div>
+        <span style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--accent);">
+            <?= $pct ?>%
+        </span>
     </div>
-    <div style="background:#e5e7eb;border-radius:999px;height:10px;">
-        <div style="background:#2563eb;width:<?= $pct ?>%;height:10px;border-radius:999px;transition:width 0.4s;"></div>
+    <div class="progress-wrap">
+        <div class="progress-bar" style="width:<?= $pct ?>%;"></div>
     </div>
 </div>
 
 <!-- Recent Tasks -->
-<div class="flex-between mb-1">
+<div class="flex-between mb-2 animate-fade-up">
     <h3>Recent Tasks</h3>
-    <a href="/views/tasks/index.php" class="btn btn-secondary">View All</a>
+    <a href="/views/tasks/index.php" class="btn btn-secondary">View All →</a>
 </div>
 
 <?php if (empty($recent)): ?>
-    <div class="alert alert-warning">
-        No tasks yet. <a href="/views/tasks/create.php">Add your first task →</a>
+    <div class="card animate-fade-up">
+        <div class="empty-state">
+            <span class="empty-state-icon">📋</span>
+            <p style="margin-bottom:1rem;">No tasks yet. Start by creating one!</p>
+            <a href="/views/tasks/create.php" class="btn btn-primary">+ Add First Task</a>
+        </div>
     </div>
 <?php else: ?>
-    <table class="table">
+    <table class="table animate-fade-up">
         <thead>
             <tr>
                 <th>Title</th>
@@ -72,21 +79,28 @@ $pct = ($stats['total'] > 0)
         <tbody>
         <?php foreach ($recent as $task): ?>
             <tr>
-                <td><?= htmlspecialchars($task['title']) ?></td>
+                <td style="font-weight:500;<?= $task['status'] === 'completed' ? 'text-decoration:line-through;color:var(--text-muted);' : '' ?>">
+                    <?= htmlspecialchars($task['title']) ?>
+                </td>
                 <td>
                     <?php if ($task['status'] === 'completed'): ?>
-                        <span style="color:#16a34a;font-weight:600;">✔ Completed</span>
+                        <span class="badge badge-completed">✔ Done</span>
                     <?php else: ?>
-                        <span style="color:#f59e0b;font-weight:600;">⏳ Pending</span>
+                        <span class="badge badge-pending">⏳ Pending</span>
                     <?php endif; ?>
                 </td>
-                <td><?= $task['due_date'] ? htmlspecialchars($task['due_date']) : '—' ?></td>
-                <td class="flex" style="gap:0.5rem;">
-                    <a href="/views/tasks/edit.php?id=<?= $task['id'] ?>" class="btn btn-secondary">Edit</a>
-                    <a href="/views/tasks/toggle.php?id=<?= $task['id'] ?>"
-                       class="btn <?= $task['status'] === 'pending' ? 'btn-success' : 'btn-secondary' ?>">
-                        <?= $task['status'] === 'pending' ? 'Complete' : 'Undo' ?>
-                    </a>
+                <td style="color:var(--text-muted);font-size:0.85rem;">
+                    <?= $task['due_date'] ? htmlspecialchars($task['due_date']) : '—' ?>
+                </td>
+                <td>
+                    <div class="flex" style="gap:0.4rem;">
+                        <a href="/views/tasks/edit.php?id=<?= $task['id'] ?>" class="btn btn-secondary" style="font-size:0.78rem;padding:0.3rem 0.7rem;">Edit</a>
+                        <a href="/views/tasks/toggle.php?id=<?= $task['id'] ?>"
+                           class="btn <?= $task['status'] === 'pending' ? 'btn-success' : 'btn-secondary' ?>"
+                           style="font-size:0.78rem;padding:0.3rem 0.7rem;">
+                            <?= $task['status'] === 'pending' ? '✔ Complete' : '↩ Undo' ?>
+                        </a>
+                    </div>
                 </td>
             </tr>
         <?php endforeach; ?>
