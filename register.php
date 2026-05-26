@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
 <div class="auth-container">
     <div class="auth-card animate-fade-up">
 
-        <span class="auth-logo">⚡ TaskFlow</span>
+        <span class="auth-logo">TaskFlow</span>
 
         <h2>Create account</h2>
         <p style="margin-bottom:1.75rem;">Join TaskFlow and start tracking your tasks.</p>
