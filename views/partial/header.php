@@ -9,13 +9,13 @@
 <body>
 <?php if (isset($_SESSION['username'])): ?>
 <nav class="navbar">
-    <div class="container flex-between">
-        <span class="nav-brand">⚡ TaskFlow</span>
+    <div class="container">
+        <span class="nav-brand">⚡ Task<span>Flow</span></span>
         <div class="nav-links">
             <a href="/views/dashboard/index.php">Dashboard</a>
             <a href="/views/tasks/index.php">My Tasks</a>
             <a href="/views/tasks/create.php">+ New Task</a>
-            <a href="/logout.php" class="btn btn-danger" style="padding:0.3rem 0.8rem;">Logout</a>
+            <a href="/logout.php" class="btn btn-danger" style="margin-left:0.5rem;">Logout</a>
         </div>
     </div>
 </nav>
