@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
     } elseif ($password !== $password2) {
         $error = 'Passwords do not match.';
     } else {
-        $controller = new AccountController($SERVER_NAME, $USERNAME, $PASSWORD, $DB_NAME);
+        $controller = new AccountController($SERVER_NAME, $USERNAME, $PASSWORD, $DB_NAME, $PORT);
         $result     = $controller->register($username, $password);
 
         if ($result === true) {
