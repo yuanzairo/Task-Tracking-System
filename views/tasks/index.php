@@ -1,7 +1,5 @@
 <?php
-// views/tasks/index.php — All Tasks (with filter)
 session_start();
-
 require_once __DIR__ . '/../../helpers/auth.php';
 require_once __DIR__ . '/../../controllers/task.php';
 require_once __DIR__ . '/../../public/database.config.php';
@@ -11,7 +9,6 @@ $taskCtrl = new TaskController($SERVER_NAME, $USERNAME, $PASSWORD, $DB_NAME);
 $filter = $_GET['filter'] ?? 'all';
 $tasks  = $taskCtrl->getAll($_SESSION['user_id'], $filter);
 
-// Handle delete from this page
 if (isset($_GET['delete'])) {
     $taskCtrl->delete((int)$_GET['delete'], $_SESSION['user_id']);
     header('Location: /views/tasks/index.php');
@@ -20,36 +17,37 @@ if (isset($_GET['delete'])) {
 ?>
 <?php require __DIR__ . '/../partial/header.php'; ?>
 
-<div class="flex-between mb-2">
-    <h2>My Tasks</h2>
-    <a href="/views/tasks/create.php" class="btn btn-primary">+ Add Task</a>
+<div class="page-header animate-fade-up">
+    <div class="flex-between">
+        <div>
+            <h1>My Tasks</h1>
+            <p style="margin:0;"><?= count($tasks) ?> task<?= count($tasks) !== 1 ? 's' : '' ?> <?= $filter !== 'all' ? "($filter)" : '' ?></p>
+        </div>
+        <a href="/views/tasks/create.php" class="btn btn-primary">+ New Task</a>
+    </div>
 </div>
 
 <!-- Filter Tabs -->
-<div class="flex mb-2" style="gap:0.5rem;">
-    <a href="?filter=all"
-       class="btn <?= $filter === 'all' ? 'btn-primary' : 'btn-secondary' ?>">
-       All
-    </a>
-    <a href="?filter=pending"
-       class="btn <?= $filter === 'pending' ? 'btn-primary' : 'btn-secondary' ?>">
-       Pending
-    </a>
-    <a href="?filter=completed"
-       class="btn <?= $filter === 'completed' ? 'btn-primary' : 'btn-secondary' ?>">
-       Completed
-    </a>
+<div class="filter-tabs mb-3 animate-fade-up">
+    <a href="?filter=all"       class="filter-tab <?= $filter === 'all'       ? 'active' : '' ?>">All</a>
+    <a href="?filter=pending"   class="filter-tab <?= $filter === 'pending'   ? 'active' : '' ?>">Pending</a>
+    <a href="?filter=completed" class="filter-tab <?= $filter === 'completed' ? 'active' : '' ?>">Completed</a>
 </div>
 
 <?php if (empty($tasks)): ?>
-    <div class="alert alert-warning">
-        No <?= $filter !== 'all' ? $filter : '' ?> tasks found.
-        <?php if ($filter === 'all'): ?>
-            <a href="/views/tasks/create.php">Create one →</a>
-        <?php endif; ?>
+    <div class="card animate-fade-up">
+        <div class="empty-state">
+            <span class="empty-state-icon">🗂</span>
+            <p style="margin-bottom:1rem;">
+                No <?= $filter !== 'all' ? $filter : '' ?> tasks found.
+            </p>
+            <?php if ($filter === 'all'): ?>
+                <a href="/views/tasks/create.php" class="btn btn-primary">+ Create Task</a>
+            <?php endif; ?>
+        </div>
     </div>
 <?php else: ?>
-    <table class="table">
+    <table class="table animate-fade-up">
         <thead>
             <tr>
                 <th>#</th>
@@ -63,39 +61,41 @@ if (isset($_GET['delete'])) {
         </thead>
         <tbody>
         <?php foreach ($tasks as $i => $task): ?>
-            <tr <?= $task['status'] === 'completed' ? 'style="opacity:0.6;"' : '' ?>>
-                <td><?= $i + 1 ?></td>
-                <td style="font-weight:600;<?= $task['status'] === 'completed' ? 'text-decoration:line-through;' : '' ?>">
+            <tr>
+                <td style="color:var(--text-dim);font-size:0.8rem;"><?= $i + 1 ?></td>
+                <td style="font-weight:500;<?= $task['status'] === 'completed' ? 'text-decoration:line-through;color:var(--text-muted);' : '' ?>">
                     <?= htmlspecialchars($task['title']) ?>
                 </td>
-                <td style="color:#64748b;font-size:0.85rem;">
+                <td style="color:var(--text-muted);font-size:0.82rem;max-width:200px;">
                     <?= $task['description']
-                        ? htmlspecialchars(mb_strimwidth($task['description'], 0, 60, '…'))
-                        : '—' ?>
+                        ? htmlspecialchars(mb_strimwidth($task['description'], 0, 55, '…'))
+                        : '<span style="color:var(--text-dim);">—</span>' ?>
                 </td>
                 <td>
                     <?php if ($task['status'] === 'completed'): ?>
-                        <span style="color:#16a34a;font-weight:600;">✔ Done</span>
+                        <span class="badge badge-completed">✔ Done</span>
                     <?php else: ?>
-                        <span style="color:#f59e0b;font-weight:600;">⏳ Pending</span>
+                        <span class="badge badge-pending">⏳ Pending</span>
                     <?php endif; ?>
                 </td>
-                <td><?= $task['due_date'] ?: '—' ?></td>
-                <td style="font-size:0.8rem;color:#94a3b8;">
+                <td style="color:var(--text-muted);font-size:0.82rem;">
+                    <?= $task['due_date'] ?: '<span style="color:var(--text-dim);">—</span>' ?>
+                </td>
+                <td style="color:var(--text-dim);font-size:0.78rem;">
                     <?= date('M j, Y', strtotime($task['created_at'])) ?>
                 </td>
                 <td>
-                    <div class="flex" style="gap:0.4rem;flex-wrap:wrap;">
+                    <div class="flex" style="gap:0.35rem;flex-wrap:wrap;">
                         <a href="/views/tasks/edit.php?id=<?= $task['id'] ?>"
-                           class="btn btn-secondary" style="font-size:0.8rem;">Edit</a>
+                           class="btn btn-secondary" style="font-size:0.78rem;padding:0.3rem 0.65rem;">Edit</a>
                         <a href="/views/tasks/toggle.php?id=<?= $task['id'] ?>"
                            class="btn <?= $task['status'] === 'pending' ? 'btn-success' : 'btn-secondary' ?>"
-                           style="font-size:0.8rem;">
-                            <?= $task['status'] === 'pending' ? '✔ Complete' : '↩ Undo' ?>
+                           style="font-size:0.78rem;padding:0.3rem 0.65rem;">
+                            <?= $task['status'] === 'pending' ? '✔' : '↩' ?>
                         </a>
                         <a href="?delete=<?= $task['id'] ?>"
-                           class="btn btn-danger" style="font-size:0.8rem;"
-                           onclick="return confirm('Delete this task?')">Delete</a>
+                           class="btn btn-danger" style="font-size:0.78rem;padding:0.3rem 0.65rem;"
+                           onclick="return confirm('Delete this task?')">✕</a>
                     </div>
                 </td>
             </tr>
