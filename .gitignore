@@ -1,1 +1,11 @@
-/oop_activity
+# Environment / secrets
+.env
+
+# Composer dependencies
+/vendor/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
